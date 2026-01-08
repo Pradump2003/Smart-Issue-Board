@@ -1,5 +1,5 @@
 const expressAsyncHandler = require("express-async-handler");
-const userCollection = require("../models/user.models");
+const userCollection = require("../models/user.model");
 const ApiResponse = require("../utils/ApiResponse.utils");
 const ErrorHandler = require("../utils/ErrorHandler");
 const generateJWTToken = require("../utils/jwt.utils");

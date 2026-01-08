@@ -4,17 +4,25 @@ const connectDB = require("./config/db.config");
 const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/user.routes");
 const issueRoutes = require("./routes/issue.routes");
+const cors = require("cors");
 
 const app = express();
 
 connectDB();
 
+app.use(
+  cors({
+    origin: "http://localhost:5173", // or 3000
+    credentials: true,
+  })
+);
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/v1/users", userRoutes); 
-app.use("/api/v1/user/issues", issueRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/issue", issueRoutes);
 
 app.listen(process.env.PORT, (err) => {
   if (err) throw err;

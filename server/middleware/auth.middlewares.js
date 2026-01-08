@@ -1,7 +1,7 @@
 const expressAsyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const ErrorHandler = require("../utils/ErrorHandler");
-const userCollection = require("../models/user.models");
+const userCollection = require("../models/user.model");
 
 const authenticate = expressAsyncHandler(async (req, res, next) => {
   let token = req?.cookies?.token || req?.headers?.authorization?.split(" ")[1];

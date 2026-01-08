@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { trim } = require("validator");
 
 const issueSchema = new mongoose.Schema(
   {
@@ -14,21 +15,21 @@ const issueSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["open", "in-progress", "resolved"],
-      default: "open",
+      enum: ["OPEN", "IN_PROGRESS", "RESOLVED"],
+      default: "OPEN",
     },
     priority: {
       type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium",
+      enum: ["LOW", "MEDIUM", "HIGH"],
+      default: "MEDIUM",
     },
     assigned: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
+      trim: true,
       required: true,
     },
   },
