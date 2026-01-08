@@ -12,7 +12,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // or 3000
+    origin: "https://smart-issue-board-coral.vercel.app", // or 3000
     credentials: true,
   })
 );
