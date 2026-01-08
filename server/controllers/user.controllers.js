@@ -33,4 +33,15 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
   new ApiResponse(200, true, "Logged out successfully").send(res);
 });
 
-module.exports = { registerUser, loginUser, logoutUser };
+const getMe = (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: {
+      id: req.user._id,
+      email: req.user.email,
+      userName: req.user.userName,
+    },
+  });
+};
+
+module.exports = { registerUser, loginUser, logoutUser, getMe };

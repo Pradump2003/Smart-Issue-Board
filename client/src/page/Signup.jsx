@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
-
+import useFetchApi from "../hooks/useFetchApi";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { fetchApi, loading, error } = useFetchApi();
 
   const [formData, setFormData] = useState({
     userName: "",
@@ -13,35 +13,25 @@ const Signup = () => {
     password: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
     try {
-      const res = await axios.post(
-        "http://localhost:9000/api/v1/user/register",
-        formData,
-        { withCredentials: true }
-      );
-      console.log(res.data);
-      console.log(res.data.message);
+      const res = await fetchApi({
+        url: "/api/v1/user/register",
+        method: "POST",
+        data: formData,
+      });
 
-      if (res.data.success) {
+      if (res.success) {
         toast.success("Account Created Successfully");
-        navigate("/"); 
+        navigate("/");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      console.log(err.response?.data?.message || "Something went wrong");
     }
   };
 

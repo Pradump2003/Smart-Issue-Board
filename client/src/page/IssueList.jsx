@@ -1,4 +1,3 @@
-import React from "react";
 import useFetchApi from "../hooks/useFetchApi";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -7,8 +6,7 @@ import CreateIssue from "../components/CreateIssue";
 import { useMemo } from "react";
 
 export default function IssueList() {
-  const { fetchApi, loading } = useFetchApi();
-
+  const { fetchApi } = useFetchApi();
   const [issues, setIssues] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -56,9 +54,8 @@ export default function IssueList() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-6">🐞 Issue Tracker</h1>
-      <div className="flex gap-4 mb-4 justify-between">
-        <div className="flex gap-4 ">
+      <div className="flex gap-4 mb-4 mt-16 justify-between">
+        <div className="flex gap-4">
           <select onChange={handleStatusChange} className="border p-2 rounded">
             <option value="ALL">All Status</option>
             <option value="OPEN">Open</option>

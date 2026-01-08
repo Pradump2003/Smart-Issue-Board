@@ -1,16 +1,12 @@
-import { useState } from "react";
 import { toast } from "react-toastify";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import useFetchApi from "../hooks/useFetchApi";
 
 export default function CreateIssue({ setOpen, fetchIssues }) {
-  const [loading, setLoading] = useState(false);
+  const { fetchApi, loading } = useFetchApi();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData(e.target);
-
     const title = formData.get("title")?.trim();
     const description = formData.get("description")?.trim();
     const priority = formData.get("priority");
@@ -27,42 +23,26 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
       return;
     }
 
-    setLoading(true);
-
-    try {
-      const res = await fetch(`${BASE_URL}/api/v1/issue/create-issue`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          priority,
-          status,
-          assigned,
-        }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message || "Failed to create issue");
-      }
-      if (result && result.success) {
-        e.target.reset(); 
+    fetchApi({
+      url: "/api/v1/issue/create-issue",
+      method: "POST",
+      data: {
+        title,
+        description,
+        priority,
+        status,
+        assigned,
+      },
+    }).then((res) => {
+      if (res && res.success) {
+        e.target.reset();
         if (fetchIssues) fetchIssues();
-        toast.success(result.message || "Issue created successfully");
-        setOpen(false); 
+        toast.success(res.message || "Issue created successfully");
+        setOpen(false);
       } else {
-        toast.error(result.message || "Failed to create issue");
+        toast.error(res.message || "Failed to create issue");
       }
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">

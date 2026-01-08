@@ -1,11 +1,11 @@
 import React from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import useFetchApi from "../hooks/useFetchApi";
 
 export default function IssueCard({ issue, fetchIssues }) {
   const [status, setStatus] = useState(issue.status);
-  const [loading, setLoading] = useState(false);
+  const { fetchApi, loading } = useFetchApi();
 
   const handleChange = async (e) => {
     const newStatus = e.target.value;
@@ -20,26 +20,14 @@ export default function IssueCard({ issue, fetchIssues }) {
     if (newStatus === status) return;
 
     setStatus(newStatus);
-    setLoading(true);
 
     try {
-      const res = await fetch(
-        `${BASE_URL}/api/v1/issue/update-status/${issue._id}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
+      const result = await fetchApi({
+        url: `/api/v1/issue/update-status/${issue._id}`,
+        method: "PATCH",
+        data: { status: newStatus },
+      });
 
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message || "Failed to update status");
-      }
       if (result && result.success) {
         if (fetchIssues) fetchIssues();
         toast.success("Status updated successfully");
@@ -48,9 +36,7 @@ export default function IssueCard({ issue, fetchIssues }) {
       }
     } catch (error) {
       toast.error(error.message);
-      setStatus(issue.status); 
-    } finally {
-      setLoading(false);
+      setStatus(issue.status);
     }
   };
   if (!issue) {

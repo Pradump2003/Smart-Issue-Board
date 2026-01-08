@@ -1,18 +1,13 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import useFetchApi from "../hooks/useFetchApi";
 
 const Login = () => {
-  const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const { fetchApi, loading, error } = useFetchApi();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,27 +15,19 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
 
     try {
-      const res = await axios.post(
-        "http://localhost:9000/api/v1/user/login",
-        formData,
-        { withCredentials: true }
-      );
+      const res = await fetchApi({
+        url: "/api/v1/user/login",
+        method: "POST",
+        data: formData,
+      });
 
-      console.log(res.data);
-    
-
-      if (res.data.success) {
-        toast.success("Login Successful");
-        navigate("/issue");
+      if (res.success) {
+        window.location.href = "/issue";
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
+      console.log(err.response?.data?.message || "Login failed");
     }
   };
 
