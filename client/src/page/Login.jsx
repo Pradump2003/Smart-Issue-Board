@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import useFetchApi from "../hooks/useFetchApi";
 import { useUser } from "../hooks/useUser";
 
-
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -27,7 +26,7 @@ const Login = () => {
     });
 
     if (res?.success) {
-      setUser(res.user); 
+      // just let cookie be set
       navigate("/issue", { replace: true });
     }
   };
