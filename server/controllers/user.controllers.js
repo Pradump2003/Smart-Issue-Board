@@ -44,4 +44,9 @@ const getMe = (req, res) => {
   });
 };
 
-module.exports = { registerUser, loginUser, logoutUser, getMe };
+const allUsers = expressAsyncHandler(async (req, res) => {
+  const users = await userCollection.find({});
+  new ApiResponse(200, true, "Users fetched successfully", users).send(res);
+});
+
+module.exports = { registerUser, loginUser, logoutUser, getMe, allUsers };
