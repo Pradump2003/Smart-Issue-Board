@@ -24,10 +24,10 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path: "/", // 🔥 THIS
     maxAge: 60 * 60 * 1000,
-    path: "/",
   });
 
   new ApiResponse(200, true, "User Login Successfully", {
@@ -40,9 +40,9 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
 const logoutUser = expressAsyncHandler(async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path: "/", // 🔥 MUST MATCH
   });
 
   new ApiResponse(200, true, "Logged out successfully").send(res);
