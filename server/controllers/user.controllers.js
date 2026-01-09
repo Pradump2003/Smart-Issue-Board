@@ -25,10 +25,8 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
-    path: "/",
-    domain: ".vercel.app", // 🔥 ADD THIS
-    maxAge: 60 * 60 * 1000,
+    sameSite: "None",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   new ApiResponse(200, true, "User Login Successfully", {
@@ -42,9 +40,8 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: "None",
     path: "/",
-    domain: ".vercel.app", // 🔥 MUST MATCH
   });
 
   new ApiResponse(200, true, "Logged out successfully").send(res);
