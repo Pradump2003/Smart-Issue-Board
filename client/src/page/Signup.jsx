@@ -18,20 +18,20 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await fetchApi({
-        url: "/api/v1/user/register",
-        method: "POST",
-        data: formData,
-      });
 
-      if (res.success) {
-        toast.success("Account Created Successfully");
-        window.location.href = "/"; 
-      }
-    } catch (err) {
-      toast.error(err.message || "Something went wrong");
+    const res = await fetchApi({
+      url: "/api/v1/user/register",
+      method: "POST",
+      data: formData,
+    });
+
+    if (res.success) {
+      toast.success("Account Created Successfully");
+      window.location.href = "/";
+      return;
     }
+
+    toast.error(res.message || "Registration failed");
   };
 
   return (
