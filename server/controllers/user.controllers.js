@@ -23,8 +23,12 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
   let token = await generateJWTToken(existingUser._id);
 
   res.cookie("token", token, {
+    httpOnly: true,
+    secure: true, 
+    sameSite: "none",
     maxAge: 1 * 60 * 60 * 1000,
   });
+
   new ApiResponse(200, true, "User Login Successfully").send(res);
 });
 
