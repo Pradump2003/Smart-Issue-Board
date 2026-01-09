@@ -7,7 +7,6 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔐 Check auth on app load / refresh
   const fetchUser = async () => {
     try {
       const res = await fetch(`${BASE_URL}/api/v1/user/me`, {

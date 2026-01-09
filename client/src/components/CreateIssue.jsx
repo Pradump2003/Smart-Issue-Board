@@ -7,6 +7,7 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+
     const title = formData.get("title")?.trim();
     const description = formData.get("description")?.trim();
     const priority = formData.get("priority");
@@ -26,27 +27,23 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
     fetchApi({
       url: "/api/v1/issue/create-issue",
       method: "POST",
-      data: {
-        title,
-        description,
-        priority,
-        status,
-        assigned,
-      },
+      data: { title, description, priority, status, assigned },
     }).then((res) => {
-      if (res && res.success) {
+      if (res?.success) {
         e.target.reset();
-        if (fetchIssues) fetchIssues();
+        fetchIssues?.();
         toast.success(res.message || "Issue created successfully");
         setOpen(false);
       } else {
-        toast.error(res.message || "Failed to create issue");
+        toast.error(res?.message || "Failed to create issue");
       }
     });
   };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-4">
+      <div className="relative bg-white w-[90vw] sm:w-full sm:max-w-lg min-h-[55vh] sm:min-h-fit rounded-xl shadow-lg p-4 sm:p-6">
+        
         <button
           onClick={() => setOpen(false)}
           className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
@@ -54,54 +51,48 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
           ✕
         </button>
 
-        <h2 className="text-xl font-semibold mb-4">Create Issue</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-4">Create Issue</h2>
 
         <form onSubmit={handleSubmit} className="grid gap-4">
+          
           <input
             name="title"
-            className="border p-3 rounded"
+            className="border p-3 rounded text-base w-full"
             placeholder="Title"
           />
 
+          
           <textarea
             name="description"
-            className="border p-3 rounded"
+            className="border p-3 rounded text-base min-h-[100px] w-full resize-none"
             placeholder="Description"
           />
 
-          <div className="flex gap-3">
+          
+          <div className="flex flex-col sm:flex-row gap-3">
             <select
               name="priority"
               defaultValue="MEDIUM"
-              className="border p-3 rounded w-1/2"
+              className="border p-3 rounded w-full sm:w-1/2"
             >
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
               <option value="HIGH">High</option>
             </select>
 
-            {/* <select
-              name="status"
-              defaultValue="OPEN"
-              className="border p-3 rounded w-1/3"
-            >
-              <option value="OPEN">Open</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="RESOLVED">Done</option>
-            </select> */}
-
             <input
               name="assigned"
-              className="border p-3 rounded w-1/2"
+              className="border p-3 rounded w-full sm:w-1/2"
               placeholder="Assigned To (email)"
             />
           </div>
 
-          <div className="flex gap-3">
+          
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 disabled:opacity-60"
+              className="w-full sm:flex-1 bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 disabled:opacity-60 transition"
             >
               {loading ? "Creating..." : "Create Issue"}
             </button>
@@ -109,7 +100,7 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="flex-1 border py-3 rounded hover:bg-gray-100"
+              className="w-full sm:flex-1 border py-3 rounded hover:bg-gray-100 transition"
             >
               Cancel
             </button>

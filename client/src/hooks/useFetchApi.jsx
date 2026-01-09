@@ -27,9 +27,8 @@ const useFetchApi = () => {
           body: data ? JSON.stringify(data) : null,
         });
 
-        // 🔐 HANDLE 401 HERE (GLOBAL)
         if (res.status === 401) {
-          setUser(null); // clear user store
+          setUser(null); 
           toast.info("Session expired. Please login again.");
           navigate("/", { replace: true });
           throw new Error("Unauthorized");
