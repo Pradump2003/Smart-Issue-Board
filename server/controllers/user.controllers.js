@@ -29,7 +29,11 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
     maxAge: 1 * 60 * 60 * 1000,
   });
 
-  new ApiResponse(200, true, "User Login Successfully").send(res);
+  new ApiResponse(200, true, "User Login Successfully", {
+    id: existingUser._id,
+    email: existingUser.email,
+    userName: existingUser.userName,
+  }).send(res);
 });
 
 const logoutUser = expressAsyncHandler(async (req, res) => {
