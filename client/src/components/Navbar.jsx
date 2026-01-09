@@ -17,7 +17,7 @@ const Navbar = () => {
 
       toast.success("Logged out successfully 👋");
       setUser(null);
-      navigate("/", { replace: true });
+      navigate("/");
     } catch (error) {
       toast.error("Logout failed");
     }
