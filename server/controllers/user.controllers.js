@@ -37,22 +37,19 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    path: "/", 
+    path: "/",
   });
 
   new ApiResponse(200, true, "Logged out successfully").send(res);
 });
 
-const getMe = (req, res) => {
-  res.status(200).json({
-    success: true,
-    user: {
-      id: req.user._id,
-      email: req.user.email,
-      userName: req.user.userName,
-    },
-  });
-};
+const getMe = expressAsyncHandler((req, res) => {
+  new ApiResponse(200, true, "User fetched successfully", {
+    id: req.user._id,
+    email: req.user.email,
+    userName: req.user.userName,
+  }).send(res);
+});
 
 const allUsers = expressAsyncHandler(async (req, res) => {
   const users = await userCollection.find({});

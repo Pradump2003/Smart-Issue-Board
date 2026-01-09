@@ -17,7 +17,7 @@ const Navbar = () => {
 
       toast.success("Logged out successfully 👋");
       setUser(null);
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (error) {
       toast.error("Logout failed");
     }
@@ -26,7 +26,6 @@ const Navbar = () => {
   return (
     <header className="fixed top-0 left-0 z-50 w-full bg-white shadow-md">
       <div className="flex flex-col sm:flex-row items-center sm:justify-between h-auto sm:h-[70px] px-4 sm:px-6 py-3 sm:py-0 gap-2">
-        
         <h1 className="text-sm sm:text-lg font-semibold truncate max-w-full sm:max-w-[70%]">
           Welcome,{" "}
           <span className="font-bold text-indigo-600">
@@ -34,7 +33,6 @@ const Navbar = () => {
           </span>
         </h1>
 
-        
         <button
           onClick={handleLogout}
           className="w-full sm:w-auto bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
