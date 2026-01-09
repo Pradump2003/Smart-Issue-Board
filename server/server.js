@@ -12,7 +12,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: "https://smart-issue-board-7rz4-2k02lahwa-pradump2003s-projects.vercel.app", // or 3000
+    origin: "https://smart-issue-board-7rz4.vercel.app", // or 3000
     credentials: true,
   })
 );
