@@ -1,5 +1,5 @@
 import useFetchApi from "../hooks/useFetchApi";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import IssueCard from "../components/IssueCard";
 import CreateIssue from "../components/CreateIssue";
 
@@ -15,12 +15,13 @@ export default function IssueList() {
   const handleStatusChange = (e) => setStatusFilter(e.target.value);
   const handlePriorityChange = (e) => setPriorityFilter(e.target.value);
 
-  useMemo(() => {
+  useEffect(() => {
     let filtered = [...issues];
 
     if (statusFilter !== "ALL") {
       filtered = filtered.filter((i) => i.status === statusFilter);
     }
+
     if (priorityFilter !== "ALL") {
       filtered = filtered.filter((i) => i.priority === priorityFilter);
     }
@@ -47,7 +48,6 @@ export default function IssueList() {
   return (
     <div className="min-h-screen bg-gray-100 px-3 sm:px-6 py-4">
       <div className="mt-24 sm:mt-16 mb-4 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center sm:justify-between">
-       
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <select
             onChange={handleStatusChange}
@@ -70,7 +70,6 @@ export default function IssueList() {
           </select>
         </div>
 
-        
         <button
           onClick={() => setOpen(true)}
           className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white font-semibold"
@@ -79,7 +78,6 @@ export default function IssueList() {
         </button>
       </div>
 
-      
       <div className="space-y-4 mb-14">
         {filteredData?.length ? (
           filteredData.map((issue) => (
@@ -96,7 +94,6 @@ export default function IssueList() {
         )}
       </div>
 
-      
       {open && <CreateIssue setOpen={setOpen} fetchIssues={fetchIssues} />}
     </div>
   );

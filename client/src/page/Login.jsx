@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useFetchApi from "../hooks/useFetchApi";
+import { useUser } from "../hooks/useUser";
+
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +10,8 @@ const Login = () => {
     password: "",
   });
   const { fetchApi, loading, error } = useFetchApi();
+  const { setUser } = useUser();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,18 +20,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await fetchApi({
-        url: "/api/v1/user/login",
-        method: "POST",
-        data: formData,
-      });
+    const res = await fetchApi({
+      url: "/api/v1/user/login",
+      method: "POST",
+      data: formData,
+    });
 
-      if (res.success) {
-        window.location.href = "/issue";
-      }
-    } catch (err) {
-      console.log(err.response?.data?.message || "Login failed");
+    if (res?.success) {
+      setUser(res.user); 
+      navigate("/issue", { replace: true });
     }
   };
 

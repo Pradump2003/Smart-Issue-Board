@@ -8,19 +8,31 @@ const useAuth = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/v1/user/me`, {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.ok) {
-          setIsAuthenticated(true);
-          setUser(res.user);
-        } else {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/v1/user/me`, {
+          credentials: "include",
+        });
+
+        if (!res.ok) {
           setIsAuthenticated(false);
+          setUser(null);
+          return;
         }
-      })
-      .catch(() => setIsAuthenticated(false))
-      .finally(() => setLoading(false));
+
+        const data = await res.json(); // ✅ THIS WAS MISSING
+
+        setIsAuthenticated(true);
+        setUser(data.user); // ✅ CORRECT
+      } catch (error) {
+        setIsAuthenticated(false);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   return { loading, user, isAuthenticated };
