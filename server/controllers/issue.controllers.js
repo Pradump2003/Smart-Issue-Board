@@ -5,22 +5,38 @@ const ApiResponse = require("../utils/ApiResponse.utils");
 const ErrorHandler = require("../utils/ErrorHandler");
 
 const createIssue = expressAsyncHandler(async (req, res) => {
-  const { title, description, priority, assigned } = req.body;
+  const { title, description, priority, assigned, forceCreate } = req.body;
 
   if (!title || !description) {
     throw new ErrorHandler("Title and description are required", 400);
   }
 
+  let user = null;
   if (assigned) {
-    user = await userCollection.findOne({
-      email: assigned,
-    });
-
+    user = await userCollection.findOne({ email: assigned });
     if (!user) {
       throw new ErrorHandler("Assigned user not found", 404);
     }
   }
 
+  // 🔍 STEP 1: Find similar issues (title + description)
+  const similarIssues = await issueCollection
+    .find(
+      { $text: { $search: title + " " + description } },
+      { score: { $meta: "textScore" } }
+    )
+    .sort({ score: { $meta: "textScore" } })
+    .limit(5);
+
+  // 🚨 STEP 2: If similar found & user didn't confirm
+  if (similarIssues.length > 0 && !forceCreate) {
+    return new ApiResponse(409, false, "Similar issues already exist", {
+      warning: "Possible duplicate issues found",
+      similarIssues,
+    }).send(res);
+  }
+
+  // ✅ STEP 3: Create issue
   const issue = await issueCollection.create({
     title,
     description,
