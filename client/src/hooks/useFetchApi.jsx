@@ -20,13 +20,14 @@ const useFetchApi = () => {
       try {
         const res = await fetch(`${BASE_URL}${url}`, {
           method,
-          credentials: "include",
+          credentials: "include", // 🔥 send JWT cookie
           headers: {
             "Content-Type": "application/json",
           },
           body: data ? JSON.stringify(data) : null,
         });
 
+        // 🔐 Only 401 is a real auth error
         if (res.status === 401) {
           setUser(null);
 
@@ -40,11 +41,13 @@ const useFetchApi = () => {
 
         const result = await res.json();
 
-        if (!res.ok) {
+        // ❌ Do NOT throw for 409 (duplicate case)
+        if (!res.ok && res.status !== 409) {
           throw new Error(result.message || "Request failed");
         }
 
-        return result;
+        // ✅ Always return result + statusCode
+        return { ...result, statusCode: res.status };
       } catch (err) {
         setError(err.message);
         throw err;
