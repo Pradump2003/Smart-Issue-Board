@@ -3,15 +3,15 @@ import useFetchApi from "../hooks/useFetchApi";
 import { useState } from "react";
 
 export default function CreateIssue({ setOpen, fetchIssues }) {
+  const { fetchApi, loading } = useFetchApi();
+
   const [similarIssues, setSimilarIssues] = useState([]);
   const [pendingIssue, setPendingIssue] = useState(null);
 
-  const { fetchApi, loading } = useFetchApi();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
 
+    const formData = new FormData(e.target);
     const title = formData.get("title")?.trim();
     const description = formData.get("description")?.trim();
     const priority = formData.get("priority");
@@ -35,27 +35,32 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
       method: "POST",
       data: payload,
     }).then((res) => {
-      // ✅ Created
+      // ✅ Issue created
       if (res?.success) {
         e.target.reset();
         fetchIssues?.();
         toast.success(res.message || "Issue created successfully");
+        setSimilarIssues([]);
+        setPendingIssue(null);
         setOpen(false);
       }
 
-      // ⚠ Duplicate found (409)
+      // ⚠ Duplicate found
       else if (res?.statusCode === 409) {
         setSimilarIssues(res.data.similarIssues);
         setPendingIssue(payload);
       }
 
-      // ❌ Other error
+      // ❌ Other errors
       else {
         toast.error(res?.message || "Failed to create issue");
       }
     });
   };
+
   const handleForceCreate = () => {
+    if (!pendingIssue) return;
+
     fetchApi({
       url: "/api/v1/issue/create-issue",
       method: "POST",
@@ -64,9 +69,9 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
       if (res?.success) {
         toast.success("Issue created despite duplicates");
         fetchIssues?.();
-        setOpen(false);
         setSimilarIssues([]);
         setPendingIssue(null);
+        setOpen(false);
       } else {
         toast.error(res?.message || "Failed to create issue");
       }
@@ -83,7 +88,9 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
           ✕
         </button>
 
-        <h2 className="text-lg sm:text-xl font-semibold mb-4">Create Issue</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-4">
+          Create Issue
+        </h2>
 
         <form onSubmit={handleSubmit} className="grid gap-4">
           <input
@@ -135,6 +142,8 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
           </div>
         </form>
       </div>
+
+      {/* Duplicate Warning Modal */}
       {similarIssues.length > 0 && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70">
           <div className="bg-white w-[90%] max-w-md rounded-xl p-5 shadow-xl">
@@ -150,14 +159,19 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
               {similarIssues.map((issue) => (
                 <div key={issue._id} className="p-2 border-b">
                   <p className="font-medium">{issue.title}</p>
-                  <p className="text-xs text-gray-500">{issue.description}</p>
+                  <p className="text-xs text-gray-500">
+                    {issue.description}
+                  </p>
                 </div>
               ))}
             </div>
 
             <div className="flex gap-3">
               <button
-                onClick={() => setSimilarIssues([])}
+                onClick={() => {
+                  setSimilarIssues([]);
+                  setPendingIssue(null);
+                }}
                 className="flex-1 border py-2 rounded"
               >
                 Cancel
