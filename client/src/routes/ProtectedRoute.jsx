@@ -4,7 +4,14 @@ import { useUser } from "../hooks/useUser";
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useUser();
 
-  if (loading) return null; // or loader
+  // ✅ WAIT until auth check is finished
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Checking authentication...
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;

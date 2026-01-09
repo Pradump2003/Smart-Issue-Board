@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useFetchApi from "../hooks/useFetchApi";
 import { useUser } from "../hooks/useUser";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -28,6 +29,7 @@ const Login = () => {
     if (res?.success) {
       // just let cookie be set
       navigate("/issue", { replace: true });
+      toast.success("Logged in successfully");
     }
   };
 

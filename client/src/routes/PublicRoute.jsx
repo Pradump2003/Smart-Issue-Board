@@ -4,7 +4,14 @@ import { useUser } from "../hooks/useUser";
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useUser();
 
-  if (loading) return null;
+  // ✅ WAIT until auth check finishes
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Checking authentication...
+      </div>
+    );
+  }
 
   if (isAuthenticated) {
     return <Navigate to="/issue" replace />;
