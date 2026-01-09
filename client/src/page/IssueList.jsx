@@ -30,15 +30,20 @@ export default function IssueList() {
   }, [statusFilter, priorityFilter, issues]);
 
   const fetchIssues = () => {
-    fetchApi({ url: "/api/v1/issue/my-issues" }).then((res) => {
-      if (res?.success) {
-        setIssues(res.data || []);
-        setFilteredData(res.data || []);
-      } else {
+    fetchApi({ url: "/api/v1/issue/my-issues" })
+      .then((res) => {
+        if (res?.success) {
+          setIssues(res.data || []);
+          setFilteredData(res.data || []);
+        } else {
+          setIssues([]);
+          setFilteredData([]);
+        }
+      })
+      .catch(() => {
         setIssues([]);
         setFilteredData([]);
-      }
-    });
+      });
   };
 
   useEffect(() => {

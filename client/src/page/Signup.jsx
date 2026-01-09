@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import useFetchApi from "../hooks/useFetchApi";
 
 const Signup = () => {
-  const navigate = useNavigate();
   const { fetchApi, loading, error } = useFetchApi();
 
   const [formData, setFormData] = useState({
@@ -28,10 +27,10 @@ const Signup = () => {
 
       if (res.success) {
         toast.success("Account Created Successfully");
-        navigate("/");
+        window.location.href = "/"; 
       }
     } catch (err) {
-      console.log(err.response?.data?.message || "Something went wrong");
+      toast.error(err.message || "Something went wrong");
     }
   };
 

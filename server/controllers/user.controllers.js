@@ -26,7 +26,8 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    maxAge: 1 * 60 * 60 * 1000,
+    maxAge: 60 * 60 * 1000,
+    path: "/",
   });
 
   new ApiResponse(200, true, "User Login Successfully", {

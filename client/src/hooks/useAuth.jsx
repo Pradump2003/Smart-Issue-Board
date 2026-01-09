@@ -20,10 +20,10 @@ const useAuth = () => {
           return;
         }
 
-        const data = await res.json(); // ✅ THIS WAS MISSING
+        const data = await res.json(); 
 
         setIsAuthenticated(true);
-        setUser(data.user); // ✅ CORRECT
+        setUser(data.user);
       } catch (error) {
         setIsAuthenticated(false);
         setUser(null);

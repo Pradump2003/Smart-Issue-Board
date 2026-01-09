@@ -76,7 +76,7 @@ export default function IssueCard({ issue, fetchIssues }) {
           onChange={handleChange}
           className="px-3 py-2 rounded border bg-white text-sm font-medium cursor-pointer disabled:opacity-60"
         >
-          <option value="OP">Open</option>
+          <option value="OPEN">Open</option>
           <option value="IN_PROGRESS">In Progress</option>
           <option value="RESOLVED">Done</option>
         </select>

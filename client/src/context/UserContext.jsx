@@ -13,12 +13,15 @@ export const UserProvider = ({ children }) => {
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Not authenticated");
+      if (res.status === 401) {
+        setUser(null);
+        setLoading(false); 
+        return;
+      }
 
       const data = await res.json();
-      setUser(data.user);
+      setUser(data.data);
     } catch (error) {
-      console.log("Errrr", error);
       setUser(null);
     } finally {
       setLoading(false);

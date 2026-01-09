@@ -28,9 +28,13 @@ const useFetchApi = () => {
         });
 
         if (res.status === 401) {
-          setUser(null); 
-          toast.info("Session expired. Please login again.");
-          navigate("/", { replace: true });
+          setUser(null);
+
+          if (!url.includes("/user/me")) {
+            toast.info("Session expired. Please login again.");
+            navigate("/", { replace: true });
+          }
+
           throw new Error("Unauthorized");
         }
 
