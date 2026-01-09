@@ -35,30 +35,23 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
       data: payload,
     });
 
-    // Axios style or custom ApiResponse style
-    const statusCode = res?.statusCode || res?.status;
-    const data = res?.data || res;
+    if (res.statusCode === 409) {
+      setSimilarIssues(res.data.similarIssues);
+      setPendingIssue(payload);
+      return;
+    }
 
-    // ✅ Created
-    if (data?.success) {
+    if (res.success) {
       e.target.reset();
       fetchIssues?.();
-      toast.success(data.message || "Issue created successfully");
+      toast.success(res.message || "Issue created successfully");
       setSimilarIssues([]);
       setPendingIssue(null);
       setOpen(false);
       return;
     }
 
-    // ⚠ Duplicate
-    if (statusCode === 409) {
-      setSimilarIssues(data?.data?.similarIssues || []);
-      setPendingIssue(payload);
-      return;
-    }
-
-    // ❌ Other error
-    toast.error(data?.message || "Failed to create issue");
+    toast.error(res.message || "Failed to create issue");
   };
 
   const handleForceCreate = async () => {
@@ -96,7 +89,11 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
         <h2 className="text-lg sm:text-xl font-semibold mb-4">Create Issue</h2>
 
         <form onSubmit={handleSubmit} className="grid gap-4">
-          <input name="title" className="border p-3 rounded" placeholder="Title" />
+          <input
+            name="title"
+            className="border p-3 rounded"
+            placeholder="Title"
+          />
           <textarea
             name="description"
             className="border p-3 rounded min-h-[100px]"
@@ -104,7 +101,11 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
           />
 
           <div className="flex gap-3">
-            <select name="priority" defaultValue="MEDIUM" className="border p-3 rounded w-1/2">
+            <select
+              name="priority"
+              defaultValue="MEDIUM"
+              className="border p-3 rounded w-1/2"
+            >
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
               <option value="HIGH">High</option>
