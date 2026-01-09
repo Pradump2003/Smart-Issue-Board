@@ -15,7 +15,6 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
     const title = formData.get("title")?.trim();
     const description = formData.get("description")?.trim();
     const priority = formData.get("priority");
-    const status = formData.get("status");
     const assigned = formData.get("assigned")?.trim();
 
     if (!title || !description) {
@@ -28,59 +27,65 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
       return;
     }
 
-    const payload = { title, description, priority, status, assigned };
+    const payload = { title, description, priority, assigned };
 
-    fetchApi({
+    const res = await fetchApi({
       url: "/api/v1/issue/create-issue",
       method: "POST",
       data: payload,
-    }).then((res) => {
-      // ✅ Issue created
-      if (res?.success) {
-        e.target.reset();
-        fetchIssues?.();
-        toast.success(res.message || "Issue created successfully");
-        setSimilarIssues([]);
-        setPendingIssue(null);
-        setOpen(false);
-      }
-
-      // ⚠ Duplicate found
-      else if (res?.statusCode === 409) {
-        setSimilarIssues(res.data.similarIssues);
-        setPendingIssue(payload);
-      }
-
-      // ❌ Other errors
-      else {
-        toast.error(res?.message || "Failed to create issue");
-      }
     });
+
+    // Axios style or custom ApiResponse style
+    const statusCode = res?.statusCode || res?.status;
+    const data = res?.data || res;
+
+    // ✅ Created
+    if (data?.success) {
+      e.target.reset();
+      fetchIssues?.();
+      toast.success(data.message || "Issue created successfully");
+      setSimilarIssues([]);
+      setPendingIssue(null);
+      setOpen(false);
+      return;
+    }
+
+    // ⚠ Duplicate
+    if (statusCode === 409) {
+      setSimilarIssues(data?.data?.similarIssues || []);
+      setPendingIssue(payload);
+      return;
+    }
+
+    // ❌ Other error
+    toast.error(data?.message || "Failed to create issue");
   };
 
-  const handleForceCreate = () => {
+  const handleForceCreate = async () => {
     if (!pendingIssue) return;
 
-    fetchApi({
+    const res = await fetchApi({
       url: "/api/v1/issue/create-issue",
       method: "POST",
       data: { ...pendingIssue, forceCreate: true },
-    }).then((res) => {
-      if (res?.success) {
-        toast.success("Issue created despite duplicates");
-        fetchIssues?.();
-        setSimilarIssues([]);
-        setPendingIssue(null);
-        setOpen(false);
-      } else {
-        toast.error(res?.message || "Failed to create issue");
-      }
     });
+
+    const data = res?.data || res;
+
+    if (data?.success) {
+      toast.success("Issue created despite duplicates");
+      fetchIssues?.();
+      setSimilarIssues([]);
+      setPendingIssue(null);
+      setOpen(false);
+    } else {
+      toast.error(data?.message || "Failed to create issue");
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-4">
-      <div className="relative bg-white w-[90vw] sm:w-full sm:max-w-lg min-h-[55vh] sm:min-h-fit rounded-xl shadow-lg p-4 sm:p-6">
+      <div className="relative bg-white w-[90vw] sm:w-full sm:max-w-lg rounded-xl shadow-lg p-4 sm:p-6">
         <button
           onClick={() => setOpen(false)}
           className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
@@ -88,29 +93,18 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
           ✕
         </button>
 
-        <h2 className="text-lg sm:text-xl font-semibold mb-4">
-          Create Issue
-        </h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-4">Create Issue</h2>
 
         <form onSubmit={handleSubmit} className="grid gap-4">
-          <input
-            name="title"
-            className="border p-3 rounded text-base w-full"
-            placeholder="Title"
-          />
-
+          <input name="title" className="border p-3 rounded" placeholder="Title" />
           <textarea
             name="description"
-            className="border p-3 rounded text-base min-h-[100px] w-full resize-none"
+            className="border p-3 rounded min-h-[100px]"
             placeholder="Description"
           />
 
-          <div className="flex flex-col sm:flex-row gap-3">
-            <select
-              name="priority"
-              defaultValue="MEDIUM"
-              className="border p-3 rounded w-full sm:w-1/2"
-            >
+          <div className="flex gap-3">
+            <select name="priority" defaultValue="MEDIUM" className="border p-3 rounded w-1/2">
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
               <option value="HIGH">High</option>
@@ -118,50 +112,34 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
 
             <input
               name="assigned"
-              className="border p-3 rounded w-full sm:w-1/2"
+              className="border p-3 rounded w-1/2"
               placeholder="Assigned To (email)"
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full sm:flex-1 bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 disabled:opacity-60 transition"
-            >
-              {loading ? "Creating..." : "Create Issue"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="w-full sm:flex-1 border py-3 rounded hover:bg-gray-100 transition"
-            >
-              Cancel
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-indigo-600 text-white py-3 rounded"
+          >
+            {loading ? "Creating..." : "Create Issue"}
+          </button>
         </form>
       </div>
 
-      {/* Duplicate Warning Modal */}
+      {/* Duplicate Modal */}
       {similarIssues.length > 0 && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70">
-          <div className="bg-white w-[90%] max-w-md rounded-xl p-5 shadow-xl">
-            <h3 className="text-lg font-semibold text-red-600 mb-2">
+          <div className="bg-white w-[90%] max-w-md rounded-xl p-5">
+            <h3 className="text-red-600 font-semibold mb-2">
               ⚠ Similar Issues Found
             </h3>
 
-            <p className="text-sm text-gray-600 mb-3">
-              These issues look similar to the one you’re creating:
-            </p>
-
-            <div className="max-h-48 overflow-auto border rounded mb-4">
-              {similarIssues.map((issue) => (
-                <div key={issue._id} className="p-2 border-b">
-                  <p className="font-medium">{issue.title}</p>
-                  <p className="text-xs text-gray-500">
-                    {issue.description}
-                  </p>
+            <div className="max-h-48 overflow-auto border mb-4">
+              {similarIssues.map((i) => (
+                <div key={i._id} className="p-2 border-b">
+                  <b>{i.title}</b>
+                  <p className="text-xs">{i.description}</p>
                 </div>
               ))}
             </div>
