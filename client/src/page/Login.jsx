@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useFetchApi from "../hooks/useFetchApi";
 import { useUser } from "../hooks/useUser";
 import { toast } from "react-toastify";
@@ -9,6 +9,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
+
   const { fetchApi, loading, error } = useFetchApi();
   const { setUser } = useUser();
 
@@ -28,7 +30,8 @@ const Login = () => {
 
       if (res?.success) {
         toast.success("Login Successful");
-        window.location.href = "/issue"; 
+        setUser(res.data);
+        navigate("/issue");
       }
     } catch (err) {
       toast.error(err.message || "Login failed");
