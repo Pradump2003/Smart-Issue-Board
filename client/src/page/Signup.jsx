@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useFetchApi from "../hooks/useFetchApi";
 
 const Signup = () => {
   const { fetchApi, loading, error } = useFetchApi();
+  const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     userName: "",
@@ -25,9 +26,9 @@ const Signup = () => {
       data: formData,
     });
 
-    if (res.success) {
+    if (res?.success) {
       toast.success("Account Created Successfully");
-      window.location.href = "/";
+      navigate("/");
       return;
     }
 
