@@ -49,12 +49,17 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
   //   sameSite: "None",
   //   path: "/",
   // });
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path: "/", // this must match the original cookie path
-  });
+    // res.clearCookie("token", {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    //   path: "/", // this must match the original cookie path
+    // });
+
+    res.clearCookie("token", "", {
+      maxAge:0
+    })
+
 
   new ApiResponse(200, true, "Logged out successfully").send(res);
 });
