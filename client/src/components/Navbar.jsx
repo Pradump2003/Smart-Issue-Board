@@ -15,14 +15,14 @@ const Navbar = () => {
         credentials: "include",
       });
 
-      let data = await resp.json();
-      console.log(data);
+      // let data = await resp.json();
+      // console.log(data);
 
-      if (data.success) {
+      // if (data.success) {
         toast.success("Logged out successfully 👋");
         setUser(null);
         navigate("/");
-      }
+      // }
     } catch (error) {
       console.log(error);
 
