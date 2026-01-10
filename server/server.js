@@ -25,13 +25,13 @@ app.use(
   })
 );
 
-app.options(
-  "*",
-  cors({
-    origin: "https://smart-issue-board-wf2v.vercel.app",
-    credentials: true,
-  })
-);
+// app.options(
+//   "/.*/",
+//   cors({
+//     origin: "https://smart-issue-board-wf2v.vercel.app",
+//     credentials: true,
+//   })
+// );
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -39,6 +39,12 @@ app.use(cookieParser());
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/issue", issueRoutes);
+
+// app.get("/*", (req, res) => {
+//   res.status(200).json({
+//     message: "Welcome to the Smart Issue Board API",
+//   });
+// });
 
 app.listen(process.env.PORT, (err) => {
   if (err) throw err;
