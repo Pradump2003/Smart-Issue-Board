@@ -19,16 +19,11 @@ const createIssue = expressAsyncHandler(async (req, res) => {
     }
   }
 
-
   const similarIssues = await issueCollection
-    .find(
-      { $text: { $search: title + " " + description } },
-      { score: { $meta: "textScore" } }
-    )
+    .find({ $text: { $search: title } }, { score: { $meta: "textScore" } })
     .sort({ score: { $meta: "textScore" } })
     .limit(5);
 
- 
   if (similarIssues.length > 0 && !forceCreate) {
     return new ApiResponse(409, false, "Similar issues already exist", {
       warning: "Possible duplicate issues found",
@@ -36,7 +31,6 @@ const createIssue = expressAsyncHandler(async (req, res) => {
     }).send(res);
   }
 
-  
   const issue = await issueCollection.create({
     title,
     description,
