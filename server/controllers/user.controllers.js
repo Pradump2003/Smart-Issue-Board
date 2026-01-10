@@ -28,11 +28,13 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
   //   sameSite: "None",
   //   maxAge: 7 * 24 * 60 * 60 * 1000,
   // });
+  res.setHeader("Cache-Control", "no-store");
+
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true, // REQUIRED for Vercel (HTTPS)
-    sameSite: "none", // REQUIRED for cross-domain
-    path: "/", // IMPORTANT: this must match the frontend path
+    secure: true,
+    sameSite: "none",
+    path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -57,6 +59,8 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
   //   path: "/", // this must match the original cookie path
   // });
 
+  res.setHeader("Cache-Control", "no-store");
+
   res.clearCookie("token", {
     httpOnly: true,
     secure: true,
@@ -64,7 +68,7 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
     path: "/",
   });
 
-  new ApiResponse(200, true, "Logged out successfully").send(res);
+  return res.status(204).end(); // no JSON body
 });
 
 const getMe = expressAsyncHandler((req, res) => {

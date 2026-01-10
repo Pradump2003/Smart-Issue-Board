@@ -25,6 +25,14 @@ app.use(
   })
 );
 
+app.options(
+  "*",
+  cors({
+    origin: "https://smart-issue-board-wf2v.vercel.app",
+    credentials: true,
+  })
+);
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
