@@ -17,7 +17,10 @@ connectDB();
 
 app.use(
   cors({
-    origin: "https://smart-issue-board-7rz4.vercel.app",
+    origin: [
+      "http://localhost:5173",
+      "https://smart-issue-board-7rz4.vercel.app",
+    ],
     credentials: true,
   })
 );
