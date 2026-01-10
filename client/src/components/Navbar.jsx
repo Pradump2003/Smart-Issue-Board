@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-     let resp =  await fetch(`${BASE_URL}/api/v1/user/logout`, {
+      let resp = await fetch(`${BASE_URL}/api/v1/user/logout`, {
         method: "GET",
         credentials: "include",
       });
@@ -23,9 +23,9 @@ const Navbar = () => {
         setUser(null);
         navigate("/");
       }
-      
-      
     } catch (error) {
+      console.log(error);
+
       toast.error("Logout failed");
     }
   };
