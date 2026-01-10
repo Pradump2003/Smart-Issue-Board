@@ -63,16 +63,14 @@ export default function CreateIssue({ setOpen, fetchIssues }) {
       data: { ...pendingIssue, forceCreate: true },
     });
 
-    const data = res?.data || res;
-
-    if (data?.success) {
+    if (res.success) {
       toast.success("Issue created despite duplicates");
       fetchIssues?.();
       setSimilarIssues([]);
       setPendingIssue(null);
       setOpen(false);
     } else {
-      toast.error(data?.message || "Failed to create issue");
+      toast.error(res.message || "Failed to create issue");
     }
   };
 
