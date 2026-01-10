@@ -30,9 +30,9 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
   // });
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true, // always true for cross-site cookies
-    sameSite: "none",
-    path: "/",
+    secure: true, // REQUIRED for Vercel (HTTPS)
+    sameSite: "none", // REQUIRED for cross-domain
+    path: "/", // IMPORTANT: this must match the frontend path
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
