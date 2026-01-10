@@ -22,12 +22,6 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
   if (!isMatch) return next(new ErrorHandler("Invalid Credential", 401));
   let token = await generateJWTToken(existingUser._id);
 
-  // res.cookie("token", token, {
-  //   httpOnly: true,
-  //   secure: true,
-  //   sameSite: "None",
-  //   maxAge: 7 * 24 * 60 * 60 * 1000,
-  // });
   res.setHeader("Cache-Control", "no-store");
 
   res.cookie("token", token, {
@@ -46,19 +40,6 @@ const loginUser = expressAsyncHandler(async (req, res, next) => {
 });
 
 const logoutUser = expressAsyncHandler(async (req, res) => {
-  // res.clearCookie("token", {
-  //   httpOnly: true,
-  //   secure: true,
-  //   sameSite: "None",
-  //   path: "/",
-  // });
-  // res.clearCookie("token", {
-  //   httpOnly: true,
-  //   secure: process.env.NODE_ENV === "production",
-  //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  //   path: "/", // this must match the original cookie path
-  // });
-
   res.setHeader("Cache-Control", "no-store");
 
   res.clearCookie("token", {
@@ -68,7 +49,7 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
     path: "/",
   });
 
-  return res.status(204).end(); // no JSON body
+  return res.status(204).end();
 });
 
 const getMe = expressAsyncHandler((req, res) => {

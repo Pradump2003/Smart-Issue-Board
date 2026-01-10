@@ -10,19 +10,14 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      let resp = await fetch(`${BASE_URL}/api/v1/user/logout`, {
+      await fetch(`${BASE_URL}/api/v1/user/logout`, {
         method: "GET",
         credentials: "include",
       });
 
-      // let data = await resp.json();
-      // console.log(data);
-
-      // if (data.success) {
-        toast.success("Logged out successfully 👋");
-        setUser(null);
-        navigate("/");
-      // }
+      toast.success("Logged out successfully 👋");
+      setUser(null);
+      navigate("/");
     } catch (error) {
       console.log(error);
 
